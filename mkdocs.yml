@@ -35,8 +35,9 @@ theme:
 nav:
   - Home: index.md
   - Configuração do Ambiente: sobre.md
-  - Upload de Banco de Dados: updload-database.md
- 
+  - Documentação:
+    - Upload de Banco de Dados: updload-database.md
+    - Automação com Airflow: airflow-automation.md
 
 # Extensions
 markdown_extensions:
