@@ -15,7 +15,7 @@ Este projeto implementa um pipeline de dados completo para e-commerce utilizando
 
 Coloque uma imagem do seu projeto, como no exemplo abaixo:
 
-![image](https://github.com/jlsilva01/projeto-ed-satc/assets/484662/541de6ab-03fa-49b3-a29f-dec8857360c1)
+![image](https://github.com/NicolasFreitas1/trabalho-final-engenharia-dados/blob/main/assets/arquitetura.png)
 
 ## 🛠️ Pré-requisitos e Ferramentas Utilizadas
 
