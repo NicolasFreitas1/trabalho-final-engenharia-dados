@@ -34,7 +34,7 @@ def init_spark():
 
 # Função para carregar dados reais das tabelas Gold
 @st.cache_data(ttl=3600)  # Cache por 1 hora
-def carregar_tabela_gold_real(spark, nome_tabela, limite=10000):
+def carregar_tabela_gold_real(_spark, nome_tabela, limite=10000):
     """Carrega dados reais de uma tabela Gold"""
     try:
         # Caminho base das tabelas Gold
@@ -42,7 +42,7 @@ def carregar_tabela_gold_real(spark, nome_tabela, limite=10000):
         caminho_completo = f"{caminho_base}/{nome_tabela}"
         
         # Carregar dados
-        df_spark = spark.read.format("delta").load(caminho_completo)
+        df_spark = _spark.read.format("delta").load(caminho_completo)
         
         # Limitar registros para performance
         df_limitado = df_spark.limit(limite)

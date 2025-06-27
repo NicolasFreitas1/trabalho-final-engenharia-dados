@@ -34,20 +34,20 @@ def init_spark():
 
 # Função para carregar dados integrados reais
 @st.cache_data(ttl=3600)  # Cache por 1 hora
-def carregar_dados_integrados_reais(spark, periodo_filtro=None):
+def carregar_dados_integrados_reais(_spark, periodo_filtro=None):
     """Carrega dados integrados reais das tabelas Gold"""
     try:
         # Caminho base das tabelas Gold
         caminho_base = "/mnt/datalake4b6c87c48101c278/gold"
         
         # Carregar tabela fato
-        fato_orders = spark.read.format("delta").load(f"{caminho_base}/fato_orders")
+        fato_orders = _spark.read.format("delta").load(f"{caminho_base}/fato_orders")
         
         # Carregar dimensões relacionadas
-        dim_customers = spark.read.format("delta").load(f"{caminho_base}/dim_customers")
-        dim_products = spark.read.format("delta").load(f"{caminho_base}/dim_products")
-        dim_order_payments = spark.read.format("delta").load(f"{caminho_base}/dim_order_payments")
-        dim_order_reviews = spark.read.format("delta").load(f"{caminho_base}/dim_order_reviews")
+        dim_customers = _spark.read.format("delta").load(f"{caminho_base}/dim_customers")
+        dim_products = _spark.read.format("delta").load(f"{caminho_base}/dim_products")
+        dim_order_payments = _spark.read.format("delta").load(f"{caminho_base}/dim_order_payments")
+        dim_order_reviews = _spark.read.format("delta").load(f"{caminho_base}/dim_order_reviews")
         
         # Fazer joins para dados integrados
         df_integrado = fato_orders \
