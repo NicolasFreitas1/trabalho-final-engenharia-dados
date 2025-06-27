@@ -92,7 +92,9 @@ pip install jupyter
 pip install notebook
 ```
 
-### 🎲 Geração de Dados
+## 📊 Opções de Ingestão de Dados
+
+### 🎲 Opção 1: Geração de Dados com Faker
 
 Execute o script para gerar dados de teste:
 
@@ -107,6 +109,44 @@ Isso irá gerar arquivos CSV com dados realistas de e-commerce:
 - `pedidos.csv`
 - `pagamentos.csv`
 - E outros...
+
+### 🗄️ Opção 2: Upload de Banco SQLite Existente
+
+Para fazer upload de um banco SQLite existente:
+
+#### 1. Configure o Script de Upload
+
+Edite o arquivo `scripts/upload_database_spark_cells.py`:
+
+```python
+# Configurações do Azure Storage
+storage_account = "seu-storage-account"
+sas_token = "seu-sas-token"
+
+# Caminho do SQLite no servidor
+sqlite_path = "/caminho/para/servidor/db.sqlite"
+
+# Lista de tabelas a processar
+tables = [
+    "customers", "geolocation", "leads_closed", "leads_qualified",
+    "order_items", "order_payments", "order_reviews", "orders",
+    "product_category_name_translation", "products", "sellers"
+]
+```
+
+#### 2. Execute o Upload
+
+```bash
+# No Databricks
+%run /path/to/scripts/upload_database_spark_cells.py
+
+# Ou localmente
+python scripts/upload_database_spark_cells.py
+```
+
+#### 3. Notebook Interativo
+
+Use o notebook `scripts/upload-database.ipynb` para execução interativa.
 
 ### ☁️ Configuração do Azure Data Lake Storage
 
@@ -175,6 +215,7 @@ Execute o notebook `projeto_ed_satc/Atividade Pratica - Lakehouse - Gold.ipynb`:
 - 📁 Os dados gerados são fictícios para fins educacionais
 - 🔐 Mantenha as credenciais seguras e não as compartilhe
 - 📊 O Databricks é recomendado para execução dos notebooks
+- 🗄️ Para upload de SQLite, certifique-se de ter acesso ao arquivo do banco
 
 ## 🛠️ Resolução de Problemas
 
@@ -200,12 +241,18 @@ Execute o notebook `projeto_ed_satc/Atividade Pratica - Lakehouse - Gold.ipynb`:
    - Configure as variáveis de ambiente JAVA_HOME
    - Use Databricks para melhor compatibilidade
 
+5. **Erro de acesso ao SQLite**:
+   - Verifique o caminho do arquivo
+   - Confirme as permissões de leitura
+   - Teste a conexão manualmente
+
 ## 📚 Recursos Adicionais
 
 - 📖 [Documentação Azure Data Lake Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)
 - 📖 [Documentação Delta Lake](https://docs.delta.io/)
 - 📖 [Documentação Apache Spark](https://spark.apache.org/docs/latest/)
 - 📖 [Documentação Terraform Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- 📖 [Upload de Banco de Dados](updload-database.md)
 
 ---
 

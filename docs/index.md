@@ -12,13 +12,14 @@ O projeto segue uma arquitetura de **Data Lake** com processamento em camadas:
 
 ### 📥 Camada de Ingestão (Landing Zone)
 - Geração automatizada de dados com **Faker**
+- Upload de dados de banco **SQLite** existente
 - Dados de múltiplas entidades (clientes, produtos, pedidos, pagamentos)
 - Armazenamento em formato CSV para processamento inicial
 
 ### 🥉 Bronze Layer
 - Dados brutos no formato original
 - Armazenamento em formato **Delta Lake**
-- Adição de metadados (timestamp, nome do arquivo)
+- Adição de metadados (timestamp, nome do arquivo, fonte)
 - Histórico completo de todas as informações
 
 ### 🥈 Silver Layer
@@ -46,6 +47,7 @@ O projeto segue uma arquitetura de **Data Lake** com processamento em camadas:
 - **💡 Insights**: Gerar recomendações baseadas em dados históricos
 - **⚡ Escalabilidade**: Arquitetura preparada para crescimento
 - **🛠️ Automação**: Pipeline completo com infraestrutura como código
+- **🔄 Migração de Dados**: Suporte para upload de bancos existentes
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -57,6 +59,7 @@ O projeto segue uma arquitetura de **Data Lake** com processamento em camadas:
 - **🐳 Docker**: Containerização dos serviços
 - **📚 MkDocs**: Documentação técnica
 - **🎲 Faker**: Geração de dados realistas
+- **🗄️ SQLite**: Banco de dados para upload de dados existentes
 
 ## 📋 Pré-requisitos
 
@@ -73,7 +76,7 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 
 1. **📖 Leia a documentação** de configuração do ambiente
 2. **🏗️ Configure** a infraestrutura Azure com Terraform
-3. **📦 Execute** o gerador de dados
+3. **📦 Execute** o gerador de dados ou **🗄️ faça upload** de banco existente
 4. **🔄 Execute** os pipelines de dados (Bronze → Silver → Gold)
 5. **📊 Explore** os resultados e análises
 
@@ -92,12 +95,36 @@ Este projeto foi desenvolvido como parte do curso de **Engenharia de Dados** da 
 ```
 trabalho-final-engenharia-dados/
 ├── 📚 docs/                    # Documentação
+│   ├── index.md               # Página principal
+│   ├── sobre.md               # Configuração do ambiente
+│   └── updload-database.md    # Upload de banco de dados
 ├── 🏗️ iac/                     # Infraestrutura como código
 ├── 📊 projeto_ed_satc/         # Notebooks principais
 ├── 🔧 scripts/                 # Scripts auxiliares
+│   ├── faker_gerador_ecommerce.py      # Gerador de dados
+│   ├── upload_database_spark_cells.py  # Upload SQLite
+│   └── upload-database.ipynb           # Notebook de upload
 ├── 🖼️ assets/                  # Diagramas
 └── 📄 Configurações
 ```
+
+## 🔄 Funcionalidades Principais
+
+### 📊 Geração de Dados
+- Script automatizado com **Faker** para dados realistas
+- Múltiplas entidades de e-commerce
+- Exportação em formato CSV
+
+### 🗄️ Upload de Banco de Dados
+- Suporte para **SQLite** existente
+- Processamento via **Apache Spark**
+- Migração automática para Data Lake
+- Metadados de rastreabilidade
+
+### ☁️ Pipeline de Dados
+- Processamento em camadas (Bronze → Silver → Gold)
+- Armazenamento em **Delta Lake**
+- Integração com **Azure Data Lake Storage**
 
 ## 👥 Autores
 
