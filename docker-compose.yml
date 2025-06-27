@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+  airflow-webserver:
+    image: apache/airflow:2.9.0
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - _PIP_ADDITIONAL_REQUIREMENTS=azure-storage-file-datalake pandas
+      - PYTHONPATH=/opt/airflow
+    volumes:
+      - ./src/dags:/opt/airflow/dags
+      - ./src/scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    ports:
+      - "8080:8080"
+    command: webserver
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0
+    restart: always
+    depends_on:
+      - airflow-webserver
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - _PIP_ADDITIONAL_REQUIREMENTS=azure-storage-file-datalake pandas
+      - PYTHONPATH=/opt/airflow
+
+    volumes:
+      - ./src/dags:/opt/airflow/dags
+      - ./src/scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    command: scheduler
+
+  airflow-init:
+    image: apache/airflow:2.9.0
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - PYTHONPATH=/opt/airflow
+    volumes:
+      - ./src/dags:/opt/airflow/dags
+    command: bash -c "airflow db migrate && airflow users create --username airflow --password airflow --firstname admin --lastname user --role Admin --email admin@example.com"
+
+volumes:
+  postgres-db-volume:
