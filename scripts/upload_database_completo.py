@@ -26,43 +26,106 @@ try:
 except ImportError:
     print("⚠️ Ambiente local detectado - algumas funcionalidades podem não estar disponíveis")
 
-# Configurações do Azure Storage
-STORAGE_ACCOUNT = "datalakeb382f326bbc70c71"
+# Configurações do Azure Storage (baseado no notebook que funcionou)
+STORAGE_ACCOUNT = "datalake4b6c87c48101c278"
 CONTAINERS_COMUNS = [
     "datalake", "data", "raw", "landing-zone", "bronze", 
     "silver", "gold", "staging", "temp", "backup", "archive"
 ]
 
+# CONFIGURAÇÃO DO SAS TOKEN - IMPORTANTE!
+# Cole seu SAS token aqui (deve começar com ?sv=...)
+AZURE_SAS_TOKEN = "sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupyx&se=2025-06-07T12:17:21Z&st=2025-06-07T04:17:21Z&spr=https&sig=BfwzYwM%2B5YR%2FBkSSyRv0Nn%2F3riHK9Wx4P%2FQoguM%2BA%2FM%3D"
+
+# Inicializar variável spark
+spark = None
+
 print("🔧 Configurações carregadas com sucesso!")
+print(f"📊 Storage Account: {STORAGE_ACCOUNT}")
+print(f"🔑 SAS Token configurado: {'Sim' if AZURE_SAS_TOKEN else 'Não'}")
 
 # =============================================================================
-# CÉLULA 2: CONFIGURAÇÃO DO SPARK
+# CÉLULA 2: CONFIGURAÇÃO DO SPARK IGUAL AO DATABRICKS
 # =============================================================================
 
-def configurar_spark_azure():
-    """Configurar Spark para Azure Storage (Spark Connect)"""
-    print("🔧 Configurando Spark para Azure Storage...")
+def configurar_spark_igual_databricks():
+    """Configurar Spark igual ao notebook do Databricks"""
+    print("🔧 Configurando Spark igual ao Databricks...")
+    
+    global spark, AZURE_SAS_TOKEN, STORAGE_ACCOUNT
+    
+    # Verificar se temos as configurações necessárias
+    if not AZURE_SAS_TOKEN:
+        print("❌ ERRO: SAS token não configurado!")
+        print("💡 Configure AZURE_SAS_TOKEN antes de continuar")
+        return None
+    
+    if not STORAGE_ACCOUNT:
+        print("❌ ERRO: Storage Account não configurado!")
+        return None
     
     try:
-        spark = SparkSession.builder \
-            .appName("UploadDatabase") \
-            .config("spark.hadoop.fs.azure", "org.apache.hadoop.fs.azure.NativeAzureFileSystem") \
-            .config("spark.hadoop.fs.azure.account.key.datalakeb382f326bbc70c71.blob.core.windows.net", "") \
-            .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
-            .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") \
-            .getOrCreate()
+        # VERIFICAR SE A SESSÃO SPARK EXISTE
+        if spark is None:
+            print("🔄 Sessão Spark não encontrada, criando uma...")
+            try:
+                # Tentar criar uma sessão Spark simples
+                spark = SparkSession.builder \
+                    .appName("UploadDatabase") \
+                    .master("local[*]") \
+                    .getOrCreate()
+                print("✅ Sessão Spark criada com sucesso")
+            except Exception as e:
+                print(f"❌ Erro ao criar sessão Spark: {str(e)}")
+                return None
+        else:
+            print("✅ Sessão Spark existente encontrada")
         
-        print("✅ Spark configurado para Azure Storage e Delta Lake")
+        # CONFIGURAR SAS TOKEN IGUAL AO NOTEBOOK
+        print("🔧 Configurando SAS token igual ao notebook...")
+        
+        # Configuração exata do notebook
+        storageAccountName = STORAGE_ACCOUNT
+        sasToken = AZURE_SAS_TOKEN
+        
+        # Configurar SAS token diretamente
+        print("📁 Configurando containers via SAS token...")
+        containers = ['landing-zone', 'bronze', 'silver', 'gold']
+        
+        for container in containers:
+            try:
+                # Configuração SAS por container
+                spark.conf.set(
+                    f"fs.azure.sas.{container}.{storageAccountName}.blob.core.windows.net",
+                    sasToken
+                )
+                
+                # Configuração de autenticação
+                spark.conf.set(
+                    f"fs.azure.account.auth.type.{storageAccountName}.blob.core.windows.net",
+                    "SAS"
+                )
+                
+                print(f"✅ SAS configurado para {container}")
+                
+            except Exception as e:
+                print(f"⚠️ Erro ao configurar {container}: {str(e)[:100]}...")
+                continue
+        
+        print("✅ Configuração Spark concluída igual ao Databricks")
         return spark
         
     except Exception as e:
-        print(f"⚠️ Configuração Azure falhou: {str(e)}")
-        print("Continuando com configuração padrão...")
-        return SparkSession.builder.appName("UploadDatabase").getOrCreate()
+        print(f"❌ Erro na configuração: {str(e)}")
+        return None
 
-# Inicializar Spark
-spark = configurar_spark_azure()
-print(f"🚀 Spark iniciado: {spark.version}")
+# Inicializar Spark igual ao Databricks
+spark = configurar_spark_igual_databricks()
+if spark:
+    print(f"🚀 Spark configurado igual ao Databricks: {spark.version}")
+else:
+    print("❌ Falha ao configurar Spark")
+    spark = None
 
 # =============================================================================
 # CÉLULA 3: DESCOBERTA DE CONTAINERS AZURE
@@ -211,78 +274,65 @@ def ler_sqlite_azure_spark_connect():
     
     print(f"\n✅ Containers encontrados: {containers_encontrados}")
     
-    # Testar diferentes combinações de container + caminho
-    caminhos_teste = []
+    # FOCAR APENAS NO CONTAINER LANDING-ZONE
+    if 'landing-zone' not in containers_encontrados:
+        print("❌ Container 'landing-zone' não encontrado!")
+        print(f"💡 Containers disponíveis: {containers_encontrados}")
+        return None
     
-    for container in containers_encontrados:
-        caminhos_teste.extend([
-            f"wasbs://{container}@{STORAGE_ACCOUNT}.blob.core.windows.net/olist.sqlite",
-            f"wasbs://{container}@{STORAGE_ACCOUNT}.blob.core.windows.net/landing-zone/olist.sqlite",
-            f"wasbs://{container}@{STORAGE_ACCOUNT}.blob.core.windows.net/data/olist.sqlite",
-            f"wasbs://{container}@{STORAGE_ACCOUNT}.blob.core.windows.net/raw/olist.sqlite",
-            f"wasbs://{container}@{STORAGE_ACCOUNT}.blob.core.windows.net/sqlite/olist.sqlite"
-        ])
+    print("🎯 Focando no container 'landing-zone'...")
     
-    print(f"\n1️⃣ Testando {len(caminhos_teste)} caminhos possíveis...")
+    # PRIMEIRO: Listar arquivos na landing zone
+    arquivos_encontrados = listar_arquivos_landing_zone()
     
-    for i, caminho in enumerate(caminhos_teste, 1):
-        print(f"\n📋 Teste {i}: {caminho}")
+    if not arquivos_encontrados:
+        print("❌ Nenhum arquivo encontrado na landing zone!")
+        return None
+    
+    # PROCURAR POR ARQUIVOS SQLITE
+    sqlite_files = [f for f in arquivos_encontrados if '.sqlite' in f.lower()]
+    
+    if not sqlite_files:
+        print("❌ Nenhum arquivo .sqlite encontrado na landing zone!")
+        print("💡 Verifique se o arquivo foi enviado corretamente")
+        return None
+    
+    print(f"\n🎯 Arquivos SQLite encontrados: {sqlite_files}")
+    
+    # TENTAR LER CADA ARQUIVO SQLITE ENCONTRADO
+    for sqlite_file in sqlite_files:
+        print(f"\n📖 Tentando ler: {sqlite_file}")
         
         try:
             # Tentar ler via Spark (compatível com Spark Connect)
-            tables = ler_sqlite_via_spark_binary(caminho)
+            tables = ler_sqlite_via_spark_binary(sqlite_file)
             if tables:
-                print(f"🎉 SUCESSO! {len(tables)} tabelas lidas")
+                print(f"🎉 SUCESSO! {len(tables)} tabelas lidas do arquivo: {sqlite_file}")
                 return tables
                     
         except Exception as e:
-            print(f"❌ Falha no teste {i}: {str(e)[:100]}...")
+            print(f"❌ Falha ao ler {sqlite_file}: {str(e)[:100]}...")
             continue
     
-    print("\n❌ Nenhum caminho funcionou!")
-    return None
-
-def ler_sqlite_local_fallback():
-    """Fallback para ler SQLite local se Azure falhar"""
-    print("\n🔄 Tentando ler SQLite local como fallback...")
-    
-    # Caminhos locais comuns
-    caminhos_locais = [
-        "olist.sqlite",
-        "data/olist.sqlite",
-        "../data/olist.sqlite",
-        "scripts/olist.sqlite",
-        "/tmp/olist.sqlite"
-    ]
-    
-    for caminho in caminhos_locais:
-        if os.path.exists(caminho):
-            print(f"✅ Arquivo local encontrado: {caminho}")
-            return ler_sqlite_com_pandas(caminho)
-    
-    print("❌ Nenhum arquivo SQLite local encontrado")
+    print("\n❌ Nenhum arquivo SQLite pôde ser lido!")
+    print("💡 Verifique se os arquivos SQLite estão corrompidos ou inacessíveis")
     return None
 
 # =============================================================================
 # CÉLULA 6: EXECUÇÃO PRINCIPAL - LEITURA DOS DADOS
 # =============================================================================
 
-print("🚀 INICIANDO LEITURA DO SQLITE...")
+print("🚀 INICIANDO LEITURA DO SQLITE DO AZURE...")
 
-# Tentar ler o SQLite do Azure
+# Tentar ler o SQLite do Azure (SEM FALLBACK LOCAL)
 tables = ler_sqlite_azure_spark_connect()
-
-# Se falhar, tentar local como fallback
-if not tables:
-    print("\n🔄 Tentando fallback local...")
-    tables = ler_sqlite_local_fallback()
 
 # =============================================================================
 # CÉLULA 7: RESULTADOS E PREVIEW
 # =============================================================================
 
 if tables:
-    print(f"\n🎉 SUCESSO! {len(tables)} tabelas lidas:")
+    print(f"\n🎉 SUCESSO! {len(tables)} tabelas lidas do Azure:")
     for table_name, df in tables.items():
         print(f"  - {table_name}: {len(df)} linhas")
         
@@ -301,8 +351,16 @@ if tables:
     print(f"\n✅ Variável 'TABELAS_SQLITE' criada com {len(tables)} tabelas")
     
 else:
-    print("\n❌ Falha ao ler tabelas do SQLite")
+    print("\n❌ FALHA AO LER TABELAS DO AZURE!")
+    print("💡 Verifique:")
+    print("  1. Se o arquivo olist.sqlite existe na landing zone")
+    print("  2. Se o SAS token está configurado corretamente")
+    print("  3. Se o storage account está acessível")
+    print("  4. Se o container 'landing-zone' existe")
+    
+    # NÃO criar dados de exemplo - forçar leitura do Azure
     TABELAS_SQLITE = None
+    print("\n🚫 Nenhum dado de exemplo criado - leia o arquivo correto do Azure")
 
 # =============================================================================
 # CÉLULA 8: FUNÇÕES AUXILIARES
@@ -330,7 +388,7 @@ def converter_para_spark_dataframe(nome_tabela):
         df_pandas = TABELAS_SQLITE[nome_tabela]
         df_spark = spark.createDataFrame(df_pandas)
         print(f"✅ Tabela '{nome_tabela}' convertida para Spark DataFrame")
-        print(f"📊 Linhas: {df_spark.count()}")
+        print(f" Linhas: {df_spark.count()}")
         return df_spark
     else:
         print(f"❌ Tabela '{nome_tabela}' não encontrada")
@@ -339,52 +397,106 @@ def converter_para_spark_dataframe(nome_tabela):
 print("✅ Funções auxiliares carregadas")
 
 # =============================================================================
-# CÉLULA 9: SALVAMENTO NA LANDING ZONE (CSV)
+# CÉLULA 9: SALVAMENTO NA LANDING ZONE (CSV) - CORRIGIDO
 # =============================================================================
 
-def salvar_csv_landing_zone():
-    """Salvar tabelas como CSV na landing zone"""
+def salvar_csv_landing_zone_corrigido():
+    """Salvar tabelas como CSV na landing zone - VERSÃO CORRIGIDA"""
     if not TABELAS_SQLITE:
         print("❌ Nenhuma tabela disponível para salvar")
         return
     
-    print("💾 SALVANDO TABELAS COMO CSV NA LANDING ZONE...")
+    print("💾 SALVANDO TABELAS COMO CSV NA LANDING ZONE (VERSÃO CORRIGIDA)...")
+    
+    # Contadores para relatório
+    salvos_azure = 0
+    falhas = 0
     
     for table_name, df in TABELAS_SQLITE.items():
+        print(f"\n📋 Processando tabela: {table_name}")
+        
         try:
             # Converter para Spark DataFrame
             df_spark = spark.createDataFrame(df)
             
-            # Caminho de destino
-            landing_path = f"wasbs://landing-zone@{STORAGE_ACCOUNT}.blob.core.windows.net/csv/{table_name}"
+            # DIFERENTES FORMATOS DE CAMINHO PARA TESTAR
+            caminhos_teste = [
+                # Formato 1: wasbs com SAS configurado
+                f"wasbs://landing-zone@{STORAGE_ACCOUNT}.blob.core.windows.net/csv/{table_name}",
+                
+                # Formato 2: abfss (Azure Data Lake Gen2)
+                f"abfss://landing-zone@{STORAGE_ACCOUNT}.dfs.core.windows.net/csv/{table_name}",
+                
+                # Formato 3: Caminho direto com SAS na URL
+                f"wasbs://landing-zone@{STORAGE_ACCOUNT}.blob.core.windows.net/csv/{table_name}?{AZURE_SAS_TOKEN.lstrip('?')}"
+            ]
             
-            # Salvar como CSV
-            df_spark.write.mode("overwrite").option("header", "true").csv(landing_path)
+            sucesso = False
             
-            print(f"✅ Tabela '{table_name}' salva como CSV em: {landing_path}")
+            for i, caminho in enumerate(caminhos_teste, 1):
+                print(f"  🧪 Tentativa {i}: {caminho.split('?')[0]}...")  # Não mostrar SAS token no log
+                
+                try:
+                    # Tentar salvar
+                    df_spark.coalesce(1).write.mode("overwrite").option("header", "true").csv(caminho)
+                    
+                    print(f"  ✅ Sucesso na tentativa {i}")
+                    sucesso = True
+                    break
+                    
+                except Exception as e:
+                    print(f"  ❌ Tentativa {i} falhou: {str(e)[:100]}...")
+                    continue
             
+            if sucesso:
+                print(f"✅ Tabela '{table_name}' salva com sucesso!")
+                salvos_azure += 1
+            else:
+                print(f"❌ Todas as tentativas falharam para '{table_name}'")
+                falhas += 1
+                    
         except Exception as e:
-            print(f"❌ Erro ao salvar '{table_name}' como CSV: {str(e)}")
+            print(f"❌ Erro geral ao processar '{table_name}': {str(e)[:200]}...")
+            falhas += 1
     
-    print("🎉 Processo de salvamento CSV concluído!")
+    # Relatório final
+    print(f"\n📊 RELATÓRIO DE SALVAMENTO CSV (CORRIGIDO):")
+    print(f"  ✅ Salvos no Azure: {salvos_azure}")
+    print(f"  ❌ Falhas: {falhas}")
+    print(f"  📈 Total processado: {len(TABELAS_SQLITE)}")
 
 # Executar salvamento CSV
 if TABELAS_SQLITE:
-    salvar_csv_landing_zone()
+    salvar_csv_landing_zone_corrigido()
 
 # =============================================================================
-# CÉLULA 10: SALVAMENTO NA CAMADA BRONZE (DELTA LAKE)
+# CÉLULA 10: SALVAMENTO NA CAMADA BRONZE (DELTA LAKE) - CORRIGIDO
 # =============================================================================
 
 def salvar_tabelas_azure_bronze():
-    """Salvar tabelas na camada Bronze do Azure (Delta Lake)"""
+    """Salvar tabelas na camada Bronze do Azure (Delta Lake) - usando caminhos montados"""
     if not TABELAS_SQLITE:
         print("❌ Nenhuma tabela disponível para salvar")
         return
     
     print("💾 SALVANDO TABELAS NA CAMADA BRONZE (DELTA LAKE)...")
     
+    # Contadores para relatório
+    salvos_azure = 0
+    falhas = 0
+    
+    # Verificar se SAS está configurado
+    if not AZURE_SAS_TOKEN:
+        print("❌ SAS token não configurado!")
+        print("💡 Configure AZURE_SAS_TOKEN para salvar no Azure Storage")
+        print("📝 Exemplo: AZURE_SAS_TOKEN = '?sv=2020-08-04&ss=bfqt&srt=sco&sp=rwdlacupitx&se=...'")
+        return
+    
+    print("✅ SAS token configurado - salvando no Azure")
+    
     for table_name, df in TABELAS_SQLITE.items():
+        print(f"\n📋 Processando tabela: {table_name}")
+        
         try:
             # Converter para Spark DataFrame
             df_spark = spark.createDataFrame(df)
@@ -394,29 +506,39 @@ def salvar_tabelas_azure_bronze():
                                .withColumn("nome_arquivo", lit(f"{table_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.parquet")) \
                                .withColumn("fonte_dados", lit("azure_sqlite"))
             
-            # Caminho de destino
+            # Caminho de destino Azure (usando formato do notebook que funcionou)
             bronze_path = f"wasbs://bronze@{STORAGE_ACCOUNT}.blob.core.windows.net/{table_name}"
             
-            # Salvar como Delta Lake
+            # Salvar como Delta Lake no Azure
             df_bronze.write.mode("overwrite").format("delta").save(bronze_path)
             
-            print(f"✅ Tabela '{table_name}' salva em Delta Lake: {bronze_path}")
-            
+            print(f"✅ Tabela '{table_name}' salva em Delta Lake no Azure: {bronze_path}")
+            salvos_azure += 1
+                    
         except Exception as e:
-            print(f"❌ Erro ao salvar '{table_name}' em Delta Lake: {str(e)}")
+            print(f"❌ Erro ao salvar '{table_name}' no Azure: {str(e)[:200]}...")
+            falhas += 1
     
-    print("🎉 Processo de salvamento Delta Lake concluído!")
+    # Relatório final
+    print(f"\n📊 RELATÓRIO DE SALVAMENTO DELTA LAKE:")
+    print(f"  ✅ Salvos no Azure: {salvos_azure}")
+    print(f"  ❌ Falhas: {falhas}")
+    print(f"  📈 Total processado: {len(TABELAS_SQLITE)}")
+    
+    if falhas > 0:
+        print(f"\n⚠️ {falhas} tabelas falharam - verifique se o SAS token tem permissões de escrita")
+        print("💡 Permissões necessárias: Read, Write, Delete, List")
 
 # Executar salvamento Delta Lake
 if TABELAS_SQLITE:
     salvar_tabelas_azure_bronze()
 
 # =============================================================================
-# CÉLULA 11: QUALIDADE DOS DADOS E VALIDAÇÕES
+# CÉLULA 11: QUALIDADE DOS DADOS E VALIDAÇÕES (CORRIGIDA)
 # =============================================================================
 
 def validar_qualidade_dados():
-    """Validar qualidade dos dados carregados"""
+    """Validar qualidade dos dados carregados (versão corrigida)"""
     if not TABELAS_SQLITE:
         print("❌ Nenhuma tabela disponível para validação")
         return
@@ -435,17 +557,37 @@ def validar_qualidade_dados():
         total_linhas = df_spark.count()
         total_colunas = len(df_spark.columns)
         
-        # Verificar valores nulos
+        # Verificar valores nulos (apenas colunas não-metadados)
         colunas_com_nulos = []
         for coluna in df_spark.columns:
             if coluna.startswith('_'):  # Pular colunas de metadados
                 continue
-            count_nulos = df_spark.filter(col(coluna).isNull() | isnan(col(coluna))).count()
-            if count_nulos > 0:
-                colunas_com_nulos.append((coluna, count_nulos))
+            try:
+                count_nulos = df_spark.filter(col(coluna).isNull() | isnan(col(coluna))).count()
+                if count_nulos > 0:
+                    colunas_com_nulos.append((coluna, count_nulos))
+            except Exception as e:
+                print(f"⚠️ Erro ao verificar nulos na coluna '{coluna}': {str(e)[:50]}...")
+                continue
         
         # Verificar duplicatas
-        count_duplicatas = df_spark.count() - df_spark.dropDuplicates().count()
+        try:
+            count_duplicatas = df_spark.count() - df_spark.dropDuplicates().count()
+        except Exception as e:
+            print(f"⚠️ Erro ao verificar duplicatas: {str(e)[:50]}...")
+            count_duplicatas = 0
+        
+        # Verificar tipos de dados (sem usar describe())
+        tipos_dados = {}
+        for coluna in df_spark.columns:
+            if coluna.startswith('_'):  # Pular colunas de metadados
+                continue
+            try:
+                # Pegar tipo da coluna
+                tipo = df_spark.schema[coluna].dataType
+                tipos_dados[coluna] = str(tipo)
+            except Exception as e:
+                tipos_dados[coluna] = "UNKNOWN"
         
         # Resultados da validação
         resultado = {
@@ -453,6 +595,7 @@ def validar_qualidade_dados():
             'total_colunas': total_colunas,
             'colunas_com_nulos': colunas_com_nulos,
             'count_duplicatas': count_duplicatas,
+            'tipos_dados': tipos_dados,
             'status': 'OK' if total_linhas > 0 else 'ERRO'
         }
         
@@ -467,13 +610,19 @@ def validar_qualidade_dados():
             print("  📝 Detalhes dos nulos:")
             for coluna, count in colunas_com_nulos[:3]:  # Mostrar apenas as primeiras 3
                 print(f"    - {coluna}: {count} nulos")
+        
+        # Mostrar alguns tipos de dados
+        print("  📊 Tipos de dados (primeiras 5 colunas):")
+        for i, (coluna, tipo) in enumerate(list(tipos_dados.items())[:5]):
+            print(f"    - {coluna}: {tipo}")
     
     return resultados_validacao
 
 # Executar validação
 if TABELAS_SQLITE:
     resultados_validacao = validar_qualidade_dados()
-    print(f"\n✅ Validação concluída para {len(resultados_validacao)} tabelas")
+    if resultados_validacao:
+        print(f"\n✅ Validação concluída para {len(resultados_validacao)} tabelas")
 
 # =============================================================================
 # CÉLULA 12: RELATÓRIO FINAL
@@ -557,4 +706,40 @@ else:
 
 print("\n" + "="*80)
 print("✅ PROCESSO COMPLETO EXECUTADO COM SUCESSO!")
-print("="*80) 
+print("="*80)
+
+def listar_arquivos_landing_zone():
+    """Listar arquivos na landing zone para encontrar o SQLite"""
+    print("🔍 LISTANDO ARQUIVOS NA LANDING ZONE...")
+    
+    try:
+        # Listar arquivos na raiz do container landing-zone
+        caminho_raiz = f"wasbs://landing-zone@{STORAGE_ACCOUNT}.blob.core.windows.net/"
+        
+        files_df = spark.read.format("binaryFile").load(caminho_raiz)
+        file_count = files_df.count()
+        
+        if file_count == 0:
+            print("❌ Nenhum arquivo encontrado na raiz da landing zone")
+            return []
+        
+        print(f"✅ Encontrados {file_count} arquivos na landing zone:")
+        
+        # Mostrar todos os arquivos
+        files_df.select("path", "length").show(file_count, truncate=False)
+        
+        # Procurar por arquivos SQLite
+        sqlite_files = files_df.filter(col("path").contains(".sqlite")).collect()
+        
+        if sqlite_files:
+            print(f"\n🎯 Arquivos SQLite encontrados:")
+            for file in sqlite_files:
+                print(f"  - {file['path']} ({file['length']} bytes)")
+        else:
+            print("\n⚠️ Nenhum arquivo .sqlite encontrado na landing zone")
+        
+        return [file['path'] for file in files_df.collect()]
+        
+    except Exception as e:
+        print(f"❌ Erro ao listar arquivos: {str(e)}")
+        return [] 
