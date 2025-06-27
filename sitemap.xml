@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/</loc>
+         <lastmod>2025-06-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/airflow-automation/</loc>
+         <lastmod>2025-06-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/sobre/</loc>
+         <lastmod>2025-06-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/updload-database/</loc>
+         <lastmod>2025-06-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>

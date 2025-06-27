@@ -1,0 +1,1330 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentação do projeto de engenharia de dados - UNISATC">
+      
+      
+        <meta name="author" content="Deyvid Charles Souza de Negreiros, Diogo Dias de Abreu Alves,Lucas Perito Lucas, Marcos Vinicius Goudinho da Silva, Nicolas Andrade de Freitas e Vitor Valcanaia Rosendo Martins">
+      
+      
+        <link rel="canonical" href="https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/sobre/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../updload-database/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.23">
+    
+    
+      
+        <title>Configuração do Ambiente - E-commerce Data Pipeline - Projeto Final Engenharia de Dados</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6543a935.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configuracao-do-ambiente-e-commerce-data-pipeline" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="E-commerce Data Pipeline - Projeto Final Engenharia de Dados" class="md-header__button md-logo" aria-label="E-commerce Data Pipeline - Projeto Final Engenharia de Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            E-commerce Data Pipeline - Projeto Final Engenharia de Dados
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuração do Ambiente
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NicolasFreitas1/trabalho-final-engenharia-dados.git" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NicolasFreitas1/trabalho-final-engenharia-dados
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Configuração do Ambiente
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../updload-database/" class="md-tabs__link">
+          
+  
+  Documentação
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="E-commerce Data Pipeline - Projeto Final Engenharia de Dados" class="md-nav__button md-logo" aria-label="E-commerce Data Pipeline - Projeto Final Engenharia de Dados" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    E-commerce Data Pipeline - Projeto Final Engenharia de Dados
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NicolasFreitas1/trabalho-final-engenharia-dados.git" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NicolasFreitas1/trabalho-final-engenharia-dados
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configuração do Ambiente
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configuração do Ambiente
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Pré-requisitos
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-do-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ Configuração do Ambiente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Configuração do Ambiente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preparacao-do-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      📂 Preparação do Workspace
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracao-da-infraestrutura-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Configuração da Infraestrutura Azure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Configuração da Infraestrutura Azure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-autenticacao-no-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Autenticação no Azure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-provisionamento-com-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Provisionamento com Terraform
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-configuracao-do-azure-data-lake-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Configuração do Azure Data Lake Storage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instalacao-de-dependencias-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 Instalação de Dependências Python
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opcoes-de-ingestao-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Opções de Ingestão de Dados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Opções de Ingestão de Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-geracao-de-dados-com-faker" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎲 Opção 1: Geração de Dados com Faker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-upload-de-banco-sqlite-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Opção 2: Upload de Banco SQLite Existente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ Opção 2: Upload de Banco SQLite Existente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configure-o-script-de-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Configure o Script de Upload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-execute-o-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Execute o Upload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-notebook-interativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Notebook Interativo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracao-do-azure-data-lake-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ☁️ Configuração do Azure Data Lake Storage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="☁️ Configuração do Azure Data Lake Storage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-upload-dos-dados-para-landing-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Upload dos Dados para Landing Zone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configuracao-de-acesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Configuração de Acesso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execucao-dos-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Execução dos Pipelines
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Execução dos Pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-camada-bronze-ingestao" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Camada Bronze (Ingestão)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-camada-silver-limpeza" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Camada Silver (Limpeza)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-camada-gold-agregacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Camada Gold (Agregação)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observacoes-importantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📝 Observações Importantes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolucao-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Resolução de Problemas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Resolução de Problemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problemas-comuns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas Comuns:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos-adicionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Recursos Adicionais
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Documentação
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Documentação
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../updload-database/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Upload de Banco de Dados
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../airflow-automation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Automação com Airflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      📋 Pré-requisitos
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracao-do-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚙️ Configuração do Ambiente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚙️ Configuração do Ambiente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preparacao-do-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      📂 Preparação do Workspace
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracao-da-infraestrutura-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      🏗️ Configuração da Infraestrutura Azure
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Configuração da Infraestrutura Azure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-autenticacao-no-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Autenticação no Azure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-provisionamento-com-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Provisionamento com Terraform
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-configuracao-do-azure-data-lake-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Configuração do Azure Data Lake Storage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instalacao-de-dependencias-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      📦 Instalação de Dependências Python
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opcoes-de-ingestao-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Opções de Ingestão de Dados
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Opções de Ingestão de Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opcao-1-geracao-de-dados-com-faker" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎲 Opção 1: Geração de Dados com Faker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opcao-2-upload-de-banco-sqlite-existente" class="md-nav__link">
+    <span class="md-ellipsis">
+      🗄️ Opção 2: Upload de Banco SQLite Existente
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🗄️ Opção 2: Upload de Banco SQLite Existente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configure-o-script-de-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Configure o Script de Upload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-execute-o-upload" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Execute o Upload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-notebook-interativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Notebook Interativo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracao-do-azure-data-lake-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      ☁️ Configuração do Azure Data Lake Storage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="☁️ Configuração do Azure Data Lake Storage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-upload-dos-dados-para-landing-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Upload dos Dados para Landing Zone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configuracao-de-acesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Configuração de Acesso
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execucao-dos-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      📊 Execução dos Pipelines
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Execução dos Pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-camada-bronze-ingestao" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Camada Bronze (Ingestão)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-camada-silver-limpeza" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Camada Silver (Limpeza)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-camada-gold-agregacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Camada Gold (Agregação)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observacoes-importantes" class="md-nav__link">
+    <span class="md-ellipsis">
+      📝 Observações Importantes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolucao-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      🛠️ Resolução de Problemas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Resolução de Problemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problemas-comuns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problemas Comuns:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos-adicionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Recursos Adicionais
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="configuracao-do-ambiente-e-commerce-data-pipeline">🚀 Configuração do Ambiente - E-commerce Data Pipeline<a class="headerlink" href="#configuracao-do-ambiente-e-commerce-data-pipeline" title="Permanent link">&para;</a></h1>
+<h2 id="pre-requisitos">📋 Pré-requisitos<a class="headerlink" href="#pre-requisitos" title="Permanent link">&para;</a></h2>
+<p>Antes de iniciar, certifique-se de ter instalado em sua máquina:</p>
+<ul>
+<li>🐍 <strong>Python 3.11.9</strong></li>
+<li>🐳 <strong>Docker Desktop</strong> (manter aberto durante o uso)</li>
+<li>📁 <strong>Git</strong></li>
+<li>💻 <strong>VS Code</strong> ou IDE de preferência</li>
+<li>☁️ <strong>Azure CLI</strong> (para autenticação)</li>
+<li>🏗️ <strong>Terraform</strong> (para provisionamento da infraestrutura)</li>
+<li>📊 <strong>Apache Spark</strong> (via Databricks ou local)</li>
+</ul>
+<h2 id="configuracao-do-ambiente">⚙️ Configuração do Ambiente<a class="headerlink" href="#configuracao-do-ambiente" title="Permanent link">&para;</a></h2>
+<h3 id="preparacao-do-workspace">📂 Preparação do Workspace<a class="headerlink" href="#preparacao-do-workspace" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Clone o repositório:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NicolasFreitas1/trabalho-final-engenharia-dados.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>trabalho-final-engenharia-dados
+</code></pre></div></p>
+</li>
+<li>
+<p>Crie um ambiente virtual Python:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Windows</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Linux/Mac</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="configuracao-da-infraestrutura-azure">🏗️ Configuração da Infraestrutura Azure<a class="headerlink" href="#configuracao-da-infraestrutura-azure" title="Permanent link">&para;</a></h3>
+<h4 id="1-autenticacao-no-azure">1. Autenticação no Azure<a class="headerlink" href="#1-autenticacao-no-azure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Login no Azure</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>az<span class="w"> </span>login
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Verificar a conta ativa</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>az<span class="w"> </span>account<span class="w"> </span>show
+</code></pre></div>
+<h4 id="2-provisionamento-com-terraform">2. Provisionamento com Terraform<a class="headerlink" href="#2-provisionamento-com-terraform" title="Permanent link">&para;</a></h4>
+<p>Navegue até a pasta de infraestrutura:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">cd</span><span class="w"> </span>iac
+</code></pre></div></p>
+<p>Configure as variáveis (opcional):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Edite o arquivo variables.tf se necessário</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># resource_group_name e location</span>
+</code></pre></div></p>
+<p>Execute o Terraform:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Inicializar</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>terraform<span class="w"> </span>init
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Verificar o plano</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>terraform<span class="w"> </span>plan
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Aplicar a infraestrutura</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>terraform<span class="w"> </span>apply
+</code></pre></div></p>
+<h4 id="3-configuracao-do-azure-data-lake-storage">3. Configuração do Azure Data Lake Storage<a class="headerlink" href="#3-configuracao-do-azure-data-lake-storage" title="Permanent link">&para;</a></h4>
+<p>Após o deploy, você terá:
+- ✅ Storage Account criada
+- ✅ Containers: <code>landing-zone</code>, <code>bronze</code>, <code>silver</code>, <code>gold</code>
+- ✅ Políticas de retenção configuradas</p>
+<h3 id="instalacao-de-dependencias-python">📦 Instalação de Dependências Python<a class="headerlink" href="#instalacao-de-dependencias-python" title="Permanent link">&para;</a></h3>
+<p>Instale as dependências necessárias:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Dependências principais</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>pip<span class="w"> </span>install<span class="w"> </span>pyspark
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>pip<span class="w"> </span>install<span class="w"> </span>delta-spark
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>pip<span class="w"> </span>install<span class="w"> </span>azure-storage-blob
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>pip<span class="w"> </span>install<span class="w"> </span>pandas
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>pip<span class="w"> </span>install<span class="w"> </span>faker
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># Dependências para desenvolvimento</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>pip<span class="w"> </span>install<span class="w"> </span>jupyter
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>pip<span class="w"> </span>install<span class="w"> </span>notebook
+</code></pre></div>
+<h2 id="opcoes-de-ingestao-de-dados">📊 Opções de Ingestão de Dados<a class="headerlink" href="#opcoes-de-ingestao-de-dados" title="Permanent link">&para;</a></h2>
+<h3 id="opcao-1-geracao-de-dados-com-faker">🎲 Opção 1: Geração de Dados com Faker<a class="headerlink" href="#opcao-1-geracao-de-dados-com-faker" title="Permanent link">&para;</a></h3>
+<p>Execute o script para gerar dados de teste:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>scripts
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>python<span class="w"> </span>faker_gerador_ecommerce.py
+</code></pre></div>
+<p>Isso irá gerar arquivos CSV com dados realistas de e-commerce:
+- <code>clientes.csv</code>
+- <code>produtos.csv</code>
+- <code>pedidos.csv</code>
+- <code>pagamentos.csv</code>
+- E outros...</p>
+<h3 id="opcao-2-upload-de-banco-sqlite-existente">🗄️ Opção 2: Upload de Banco SQLite Existente<a class="headerlink" href="#opcao-2-upload-de-banco-sqlite-existente" title="Permanent link">&para;</a></h3>
+<p>Para fazer upload de um banco SQLite existente:</p>
+<h4 id="1-configure-o-script-de-upload">1. Configure o Script de Upload<a class="headerlink" href="#1-configure-o-script-de-upload" title="Permanent link">&para;</a></h4>
+<p>Edite o arquivo <code>scripts/upload_database_spark_cells.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Configurações do Azure Storage</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">storage_account</span> <span class="o">=</span> <span class="s2">&quot;seu-storage-account&quot;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">sas_token</span> <span class="o">=</span> <span class="s2">&quot;seu-sas-token&quot;</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Caminho do SQLite no servidor</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">sqlite_path</span> <span class="o">=</span> <span class="s2">&quot;/caminho/para/servidor/db.sqlite&quot;</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="c1"># Lista de tabelas a processar</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">tables</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="s2">&quot;customers&quot;</span><span class="p">,</span> <span class="s2">&quot;geolocation&quot;</span><span class="p">,</span> <span class="s2">&quot;leads_closed&quot;</span><span class="p">,</span> <span class="s2">&quot;leads_qualified&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="s2">&quot;order_items&quot;</span><span class="p">,</span> <span class="s2">&quot;order_payments&quot;</span><span class="p">,</span> <span class="s2">&quot;order_reviews&quot;</span><span class="p">,</span> <span class="s2">&quot;orders&quot;</span><span class="p">,</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="s2">&quot;product_category_name_translation&quot;</span><span class="p">,</span> <span class="s2">&quot;products&quot;</span><span class="p">,</span> <span class="s2">&quot;sellers&quot;</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">]</span>
+</code></pre></div>
+<h4 id="2-execute-o-upload">2. Execute o Upload<a class="headerlink" href="#2-execute-o-upload" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># No Databricks</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>%run<span class="w"> </span>/path/to/scripts/upload_database_spark_cells.py
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Ou localmente</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>python<span class="w"> </span>scripts/upload_database_spark_cells.py
+</code></pre></div>
+<h4 id="3-notebook-interativo">3. Notebook Interativo<a class="headerlink" href="#3-notebook-interativo" title="Permanent link">&para;</a></h4>
+<p>Use o notebook <code>scripts/upload-database.ipynb</code> para execução interativa.</p>
+<h3 id="configuracao-do-azure-data-lake-storage">☁️ Configuração do Azure Data Lake Storage<a class="headerlink" href="#configuracao-do-azure-data-lake-storage" title="Permanent link">&para;</a></h3>
+<h4 id="1-upload-dos-dados-para-landing-zone">1. Upload dos Dados para Landing Zone<a class="headerlink" href="#1-upload-dos-dados-para-landing-zone" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Usando Azure CLI</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>az<span class="w"> </span>storage<span class="w"> </span>blob<span class="w"> </span>upload-batch<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--account-name<span class="w"> </span>&lt;storage-account-name&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>--container-name<span class="w"> </span>landing-zone<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span>--source<span class="w"> </span>./scripts<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span>--pattern<span class="w"> </span><span class="s2">&quot;*.csv&quot;</span>
+</code></pre></div>
+<h4 id="2-configuracao-de-acesso">2. Configuração de Acesso<a class="headerlink" href="#2-configuracao-de-acesso" title="Permanent link">&para;</a></h4>
+<p>Configure as credenciais de acesso no Azure:
+- Gere um SAS Token ou configure Service Principal
+- Configure as variáveis de ambiente ou use Azure Key Vault</p>
+<h3 id="execucao-dos-pipelines">📊 Execução dos Pipelines<a class="headerlink" href="#execucao-dos-pipelines" title="Permanent link">&para;</a></h3>
+<h4 id="1-camada-bronze-ingestao">1. Camada Bronze (Ingestão)<a class="headerlink" href="#1-camada-bronze-ingestao" title="Permanent link">&para;</a></h4>
+<p>Abra o notebook <code>projeto_ed_satc/Atividade Pratica - Lakehouse - Bronze.ipynb</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Configure as variáveis de conexão</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">storageAccountName</span> <span class="o">=</span> <span class="s2">&quot;seu-storage-account&quot;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">sasToken</span> <span class="o">=</span> <span class="s2">&quot;seu-sas-token&quot;</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># Execute as células para:</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># - Montar os containers</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># - Ler dados CSV</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># - Adicionar metadados</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="c1"># - Salvar em Delta Lake</span>
+</code></pre></div>
+<h4 id="2-camada-silver-limpeza">2. Camada Silver (Limpeza)<a class="headerlink" href="#2-camada-silver-limpeza" title="Permanent link">&para;</a></h4>
+<p>Execute o notebook <code>projeto_ed_satc/Atividade Pratica - Lakehouse - Silver.ipynb</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Processos realizados:</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># - Leitura dos dados Bronze</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># - Padronização de colunas</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># - Limpeza de dados</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># - Salvamento na camada Silver</span>
+</code></pre></div>
+<h4 id="3-camada-gold-agregacao">3. Camada Gold (Agregação)<a class="headerlink" href="#3-camada-gold-agregacao" title="Permanent link">&para;</a></h4>
+<p>Execute o notebook <code>projeto_ed_satc/Atividade Pratica - Lakehouse - Gold.ipynb</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Processos realizados:</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1"># - Agregações de negócio</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1"># - Cálculo de métricas</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># - Preparação para dashboards</span>
+</code></pre></div>
+<h2 id="observacoes-importantes">📝 Observações Importantes<a class="headerlink" href="#observacoes-importantes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>🐳 Mantenha o <strong>Docker Desktop</strong> aberto durante todo o processo</li>
+<li>☁️ Certifique-se de ter créditos suficientes na conta Azure</li>
+<li>📁 Os dados gerados são fictícios para fins educacionais</li>
+<li>🔐 Mantenha as credenciais seguras e não as compartilhe</li>
+<li>📊 O Databricks é recomendado para execução dos notebooks</li>
+<li>🗄️ Para upload de SQLite, certifique-se de ter acesso ao arquivo do banco</li>
+</ul>
+<h2 id="resolucao-de-problemas">🛠️ Resolução de Problemas<a class="headerlink" href="#resolucao-de-problemas" title="Permanent link">&para;</a></h2>
+<h3 id="problemas-comuns">Problemas Comuns:<a class="headerlink" href="#problemas-comuns" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Erro de autenticação Azure</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>az<span class="w"> </span>login<span class="w"> </span>--use-device-code
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Erro de permissões Terraform</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>az<span class="w"> </span>role<span class="w"> </span>assignment<span class="w"> </span>create<span class="w"> </span>--assignee<span class="w"> </span>&lt;app-id&gt;<span class="w"> </span>--role<span class="w"> </span>Contributor<span class="w"> </span>--scope<span class="w"> </span>/subscriptions/&lt;subscription-id&gt;
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Erro de conexão com Storage</strong>:</p>
+</li>
+<li>Verifique se o SAS Token está correto</li>
+<li>Confirme se o container existe</li>
+<li>
+<p>Verifique as permissões de acesso</p>
+</li>
+<li>
+<p><strong>Erro no Spark</strong>:</p>
+</li>
+<li>Verifique se o Java está instalado</li>
+<li>Configure as variáveis de ambiente JAVA_HOME</li>
+<li>
+<p>Use Databricks para melhor compatibilidade</p>
+</li>
+<li>
+<p><strong>Erro de acesso ao SQLite</strong>:</p>
+</li>
+<li>Verifique o caminho do arquivo</li>
+<li>Confirme as permissões de leitura</li>
+<li>Teste a conexão manualmente</li>
+</ol>
+<h2 id="recursos-adicionais">📚 Recursos Adicionais<a class="headerlink" href="#recursos-adicionais" title="Permanent link">&para;</a></h2>
+<ul>
+<li>📖 <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction">Documentação Azure Data Lake Storage</a></li>
+<li>📖 <a href="https://docs.delta.io/">Documentação Delta Lake</a></li>
+<li>📖 <a href="https://spark.apache.org/docs/latest/">Documentação Apache Spark</a></li>
+<li>📖 <a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs">Documentação Terraform Azure</a></li>
+<li>📖 <a href="../updload-database/">Upload de Banco de Dados</a></li>
+</ul>
+<hr />
+<p>🎯 <strong>Pronto para começar!</strong> Siga os passos acima e você terá um pipeline completo de dados funcionando!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.top", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.ebd0bdb7.min.js"></script>
+      
+    
+  </body>
+</html>
