@@ -241,12 +241,12 @@ Este projeto está na versão 0.1.0 e utiliza controle de versão semântico.
 
 ## 👥 Autores
 
-- **Deyvid Charles Souza de Negreiros** - _Documentação_ - [https://github.com/DeivydCharles](https://github.com/DeivydCharles)
-- **Diogo Dias de Abreu Alves** - _Documentação_ - [https://github.com/DiogoDiasAlves](https://github.com/DiogoDiasAlves)
-- **Lucas Perito Lopes** - _Trabalho Inicial_ - [(https://github.com/llucaslopes)](https://github.com/llucaslopes)
-- **Marcos Vinicius Goudinho da Silva** - _Documentação_ - [https://github.com/marcosgoudinho](https://github.com/marcosgoudinho)
-- **Nicolas Andrade de Freitas** - _Documentação_ - [https://github.com/NicolasFreitas1](https://github.com/NicolasFreitas1)
-
+- **Deyvid Charles Souza de Negreiros** - _Dashboard_ - [DeivydCharles](https://github.com/DeivydCharles)
+- **Diogo Dias de Abreu Alves** - _Mkdocs_ - [DiogoDiasAlves](https://github.com/DiogoDiasAlves)
+- **Lucas Perito Lopes** - _Documentação_ - [(llucaslopes)](https://github.com/llucaslopes)
+- **Marcos Vinicius Goudinho da Silva** - _Implementação dos medalhões_ - [marcosgoudinho](https://github.com/marcosgoudinho)
+- **Nicolas Andrade de Freitas** - _Ingestão de dados_ - [NicolasFreitas1](https://github.com/NicolasFreitas1)
+- **Vitor Valcanaia Rosendo Martins** - _KPIs_ - [Valcanaia282](https://github.com/Valcanaia282)
 ## 📄 Licença
 
 Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.  
