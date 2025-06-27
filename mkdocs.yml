@@ -1,5 +1,5 @@
 # mkdocs.yml
-site_name: Streaming de vídeos - Pipeline Completo
+site_name: E-commerce Data Pipeline - Projeto Final Engenharia de Dados
 site_description: Documentação do projeto de engenharia de dados - UNISATC
 site_author: Deyvid Charles Souza de Negreiros, Diogo Dias de Abreu Alves,Lucas Perito Lucas, Marcos Vinicius Goudinho da Silva, Nicolas Andrade de Freitas e Vitor Valcanaia Rosendo Martins
 site_url: https://nicolasfreitas1.github.io/trabalho-final-engenharia-dados/
@@ -34,7 +34,8 @@ theme:
 # Navigation
 nav:
   - Home: index.md
-  - sobre: sobre.md
+  - Configuração do Ambiente: sobre.md
+  - Upload de Banco de Dados: updload-database.md
  
 
 # Extensions
