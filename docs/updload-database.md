@@ -1,221 +1,132 @@
-# SQLite para Lakehouse com Spark
+# SQLite para Lakehouse com Python e Azure Data Lake Gen2
 
-Este conjunto de scripts permite ler dados de um banco SQLite localizado em um servidor e carregá-los na arquitetura Lakehouse usando Apache Spark.
+Este conjunto de scripts permite exportar dados de um banco SQLite local para arquivos CSV e carregá-los na arquitetura Lakehouse (landing zone) no Azure Data Lake Gen2, com controle total sobre sobrescrita e limpeza dos arquivos.
 
 ## Pré-requisitos
 
-### Para o Notebook (Databricks)
+- Python 3.8+
+- Bibliotecas: `pandas`, `azure-storage-file-datalake`, `sqlite3`
+- SAS Token do Azure Storage com permissões adequadas
+- Acesso ao arquivo SQLite local
 
-- Workspace do Databricks configurado
-- Cluster Spark com acesso ao Azure Storage
-- Permissões para montar storage no Databricks
+> **O arquivo SQLite utilizado neste projeto está disponível publicamente em:** > [https://www.kaggle.com/datasets/terencicp/e-commerce-dataset-by-olist-as-an-sqlite-database?resource=download](https://www.kaggle.com/datasets/terencicp/e-commerce-dataset-by-olist-as-an-sqlite-database?resource=download)
+>
+> Baixe o arquivo e coloque-o no diretório indicado em `db_path`.
+
+## Instalação de Dependências
+
+```bash
+pip install pandas azure-storage-file-datalake
+```
 
 ## Configuração
 
-### 1. Configurações do Azure Storage
+### 1. Parâmetros do Azure Storage
 
-Edite as seguintes variáveis nos scripts:
+Edite as seguintes variáveis no script:
 
 ```python
-storage_account_name = "datalake4b6c87c48101c278"  # Seu storage account
-sas_token = "seu_token_sas_aqui"  # Token SAS do Azure Storage
+account_name = "SEU_ACCOUNT_NAME"  # Nome da storage account
+sas_token = "SEU_SAS_TOKEN"        # Token SAS do Azure Storage
+filesystem_name = "landing-zone"   # Nome do container
+landing_zone_path = "csvs"         # Pasta de destino no Data Lake (ou "" para raiz)
 ```
 
-### 2. Configurações do SQLite
-
-Especifique o caminho do arquivo SQLite no servidor:
+### 2. Parâmetros do SQLite
 
 ```python
-# Para acesso direto ao arquivo
-sqlite_path = "/caminho/para/servidor/db.sqlite"
-
-# Para acesso via JDBC (se configurado)
-sqlite_server_url = "jdbc:sqlite://servidor:porta/caminho/db.sqlite"
+db_path = '../data/db.sqlite'          # Caminho para o banco SQLite
+export_dir = '../data/exported_tables' # Diretório para salvar os CSVs
 ```
 
-### 3. Tabelas a serem processadas
+## Modos de Operação
 
-A lista padrão inclui as tabelas do dataset Olist:
+Tanto a exportação quanto o upload aceitam três modos:
+
+- `'skip'`: pula arquivos que já existem (não sobrescreve nada)
+- `'overwrite'`: sobrescreve arquivos existentes
+- `'force'`: deleta arquivos antigos antes de exportar/subir
+
+Exemplo de configuração:
 
 ```python
-tables = [
-    "customers", "geolocation", "leads_closed", "leads_qualified",
-    "order_items", "order_payments", "order_reviews", "orders",
-    "product_category_name_translation", "products", "sellers"
-]
+export_mode = 'skip'      # Para exportação do SQLite
+upload_mode = 'overwrite' # Para upload ao Data Lake
 ```
 
 ## Como Usar
 
-### Opção 1: Notebook Databricks
+### 1. Edite o script `scripts/export_and_upload_sqlite_to_datalake.py` com seus parâmetros.
 
-1. Abra o notebook `upload-database-spark.ipynb` no Databricks
-2. Execute as células em sequência
-3. Ajuste as configurações conforme necessário
-4. Monitore o progresso através das células de validação
-
-### Opção 2: Script Python
-
-1. Configure as variáveis no script
-2. Execute o comando:
+### 2. Execute o script:
 
 ```bash
-python upload_database_spark.py
+python scripts/export_and_upload_sqlite_to_datalake.py
 ```
 
-Ou no Databricks:
+### 3. Exemplo de uso das funções no seu próprio notebook ou script:
 
 ```python
-%run /path/to/upload_database_spark.py
+from export_and_upload_sqlite_to_datalake import export_sqlite_to_csv, create_datalake_client, upload_files_to_datalake
+
+# Parâmetros
+account_name = "SEU_ACCOUNT_NAME"
+sas_token = "SEU_SAS_TOKEN"
+filesystem_name = "landing-zone"
+landing_zone_path = "csvs"
+db_path = 'data/db.sqlite'
+export_dir = 'data/exported_tables'
+
+# Modos
+export_mode = 'force'      # 'skip', 'overwrite' ou 'force'
+upload_mode = 'force'      # 'skip', 'overwrite' ou 'force'
+
+# Exportação
+export_sqlite_to_csv(db_path, export_dir, mode=export_mode)
+
+# Cliente Data Lake
+datalake_client = create_datalake_client(account_name, sas_token, filesystem_name)
+
+# Upload
+upload_files_to_datalake(export_dir, landing_zone_path, datalake_client, mode=upload_mode)
 ```
+
+## O que cada modo faz?
+
+- **skip**: nunca sobrescreve arquivos já existentes, ideal para execuções incrementais.
+- **overwrite**: sempre sobrescreve arquivos existentes, sem deletar explicitamente antes.
+- **force**: deleta arquivos antigos antes de exportar/subir, garantindo limpeza total.
 
 ## Fluxo de Processamento
 
-1. **Configuração do Spark**: Criação da SparkSession
-2. **Montagem do Storage**: Conexão com Azure Storage
-3. **Leitura do SQLite**:
-   - Método 1: JDBC (se disponível)
-   - Método 2: pandas + sqlite3 (fallback)
-4. **Adição de Metadados**: Timestamp e informações de origem
-5. **Landing Zone**: Salvamento como CSV
-6. **Camada Bronze**: Salvamento como Delta Lake
-7. **Validação**: Verificação dos dados processados
+1. **Exportação do SQLite**: Exporta todas as tabelas para CSV, conforme o modo escolhido.
+2. **Upload para o Data Lake**: Faz upload dos CSVs para a landing zone, conforme o modo escolhido.
+3. **Logs informativos**: O script imprime o modo selecionado e o que está sendo feito em cada etapa.
 
 ## Estrutura de Saída
 
 ### Landing Zone
 
 ```
-/mnt/{storage_account}/landing-zone/
-├── customers_{timestamp}.csv
-├── geolocation_{timestamp}.csv
-├── leads_closed_{timestamp}.csv
+landing-zone/csvs/
+├── customers.csv
+├── geolocation.csv
+├── leads_closed.csv
 ├── ...
-└── sellers_{timestamp}.csv
+└── sellers.csv
 ```
-
-### Camada Bronze
-
-```
-/mnt/{storage_account}/bronze/
-├── customers/
-├── geolocation/
-├── leads_closed/
-├── ...
-└── sellers/
-```
-
-## Metadados Adicionados
-
-Cada tabela processada recebe as seguintes colunas de metadados:
-
-- `data_hora_bronze`: Timestamp do processamento
-- `nome_arquivo`: Nome do arquivo de origem
-- `fonte_dados`: Identificação da fonte (sqlite_server)
-
-## Tratamento de Erros
-
-O script inclui tratamento robusto de erros:
-
-- **Falha no JDBC**: Fallback automático para pandas
-- **Erro de conexão**: Log detalhado do erro
-- **Falha no storage**: Continuação com outras tabelas
-- **Validação**: Verificação de integridade dos dados
-
-## Monitoramento
-
-### Logs de Execução
-
-- Progresso de cada etapa
-- Contagem de linhas por tabela
-- Tempo de processamento
-- Erros e avisos
-
-### Validação de Dados
-
-- Verificação de arquivos na landing zone
-- Verificação de tabelas na Bronze
-- Amostra de dados para validação
 
 ## Troubleshooting
 
-### Problemas Comuns
-
-1. **Erro de conexão SQLite**
-
-   - Verifique o caminho do arquivo
-   - Confirme permissões de acesso
-   - Teste a conexão manualmente
-
-2. **Erro de montagem do Storage**
-
-   - Verifique o SAS token
-   - Confirme o nome da storage account
-   - Verifique permissões no Azure
-
-3. **Erro de memória Spark**
-   - Ajuste as configurações de partição
-   - Reduza o tamanho do lote
-   - Aumente a memória do cluster
-
-### Comandos de Diagnóstico
-
-```python
-# Verificar montagens
-display(dbutils.fs.mounts())
-
-# Listar arquivos na landing zone
-display(dbutils.fs.ls(f"/mnt/{storage_account}/landing-zone"))
-
-# Verificar tabelas na Bronze
-display(dbutils.fs.ls(f"/mnt/{storage_account}/bronze"))
-
-# Testar leitura de uma tabela
-df = spark.read.format('delta').load(f'/mnt/{storage_account}/bronze/products')
-df.count()
-```
+- **Permissões SAS**: Certifique-se de que o SAS Token tem permissões de leitura, escrita, criação e deleção para o container e objetos.
+- **Erros de conexão**: Verifique o caminho do banco SQLite e as credenciais do Azure.
+- **Sobrescrita/limpeza**: Use o modo adequado para seu caso de uso.
 
 ## Personalização
 
-### Adicionar Novas Tabelas
+- Para exportar apenas algumas tabelas, edite a função de exportação para filtrar as tabelas desejadas.
+- Para mudar o formato de saída (ex: Parquet), adapte a função de exportação.
 
-Edite a lista `tables` no script:
+---
 
-```python
-tables = [
-    "sua_tabela_1",
-    "sua_tabela_2",
-    # ... outras tabelas
-]
-```
-
-### Modificar Metadados
-
-Ajuste as colunas de metadados na função `read_sqlite_from_server`:
-
-```python
-df = df.withColumn("data_hora_bronze", current_timestamp()) \
-       .withColumn("nome_arquivo", lit(f"{table}_{timestamp}.csv")) \
-       .withColumn("fonte_dados", lit("sqlite_server")) \
-       .withColumn("seu_metadado", lit("seu_valor"))
-```
-
-### Configurar Particionamento
-
-Para otimizar o desempenho, configure o particionamento:
-
-```python
-df.write.format('delta') \
-    .partitionBy("data_hora_bronze") \
-    .mode("overwrite") \
-    .save(bronze_path)
-```
-
-## Suporte
-
-Para dúvidas ou problemas:
-
-1. Verifique os logs de execução
-2. Teste a conectividade manualmente
-3. Valide as configurações do Azure Storage
-4. Consulte a documentação do Spark e Databricks
+**Dúvidas ou problemas? Consulte o script e os prints de log para entender o que foi feito em cada etapa.**
